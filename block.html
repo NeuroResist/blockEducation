@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<script type="text/javascript" src="C:\Users\DNS\Desktop\Проект 2\Блокчеин\Исходники сайта\sha256.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+
+
+            var shaObj = new jsSHA("SHA-256", "TEXT");
+            shaObj.update("privet");
+            var targetHash = shaObj.getHash("HEX");
+
+var blockChain =[];
+var id = 0;
+var lasthash="генезис блок";
+var target = 2500;
+var peoples = ["Гоша","Петя","Вова","Игорь"];
+function generator(){
+    this.id = id; /* номер блока 1) */
+
+	var time = new Date;
+	this.time = time.getTime(); /* время создания 2) */
+	var tr = ~~(Math.random()*4); // рандомное число для людей в транзакции
+	var transactions = function(){var z = []; for (var i = 0;i<=tr;i++){z.push(peoples[~~(Math.random()*4)])}; return z;} 
+    if(($('#check').is(":checked"))==true){var transactions = prompt("комментарий"); this.transactions = transactions;} else {
+	this.transactions = transactions();} // /* транзакции с людьми 5) */
+    if (id!=0){
+       lasthash = blockChain[id-1].hash;
+	   this.lasthash = lasthash; /* lasthash (если не первый элемент) 6)*/
+    } else {this.lasthash = "генезис блок";}
+	var t = [this.id+"", this.time+"", this.transactions+"", this.lasthash+""]; // массив с id, time, transactions, lashash
+	var hash = t[0]+t[1]+t[2]+t[3];
+    for (var i = 0;true;i++){
+        hash+=""+i;
+        // Тут хэшируются данные выше
+        var shaObj = new jsSHA("SHA-256", "TEXT");
+        shaObj.update(hash);
+        hash = shaObj.getHash("HEX");
+        //
+        hashCut = parseInt(hash.slice(0,6),16); // hash - 6 символов десятичной сс   
+        if (hashCut<target) {break;}
+    }
+    /*alert(hash+"_"+hashCut+"_"+target+"_"+i); - проверка */
+	this.hash = hash; // полный хэш 4) + без прошлого хэша, добавить
+	this.nonce = i; /* nonce 3) */
+    id++;
+    blockChain.push(this);
+/* Создание каркаса блока */
+    var block = $('<div style="width:200px; height: 321px; margin-left:10px; margin-top:5px; display:inline-block; border:solid 2px; background-color: rgb(0, 252, 0);"></div>')
+    .append("Id блока")
+    .append("<input value='dasd'>")
+    .append("Время создания")
+    .append("<input>")
+    .append("Nonce")
+    .append("<input>")
+    .append("<p style='margin: 0px;'>Хэш</p> ")
+    .append("<textarea style='height: 42px; width: 180px;'>")
+    .append("<p style='margin: 0px;'>транзакции</p> ")
+    .append("<textarea style='height: 40px; width: 180px;'>")
+    .append("<p style='margin: 0px;'>хэш предыдущего блока</p> ")
+    .append("<textarea style='height: 42px; width: 180px;'>");
+    $("body").append(block);
+    $(block).children().eq(0).val(id);
+    $(block).children().eq(1).val(time.getTime());
+    $(block).children().eq(2).val(i);
+    $(block).children().eq(4).val(hash);
+    $(block).children().eq(6).val(transactions);
+    $(block).children().eq(8).val(lasthash);
+
+} /*style="width:200px; height: 300px; display:inline-block; border:solid 2px;"*/
+/* $.each(blockChain,function(i,el){consolr,log(el.id+1)}) */
+</script>
+
+<style>
+    #main {width: 100%;height: 100%;}
+</style>
+<body>
+<div id="main">
+    <button onclick="new generator();">1 блок</button>
+    <button onclick="target = prompt(); return target;">target</button>
+    <button onclick="console.log(blockChain);">Вывести массив</button>
+    <button onclick="var count = prompt('сколько блоков создать?'); for(var i=0;i<count;i++){generator();}">Создать несколько блоков</button>
+    <input id="check" type="checkbox">
+    <button onclick="var find = prompt('По какому критерию найти?'); var in1 = prompt('что найти?'); var out = prompt('что вывести?'); $.each(blockChain,function(i,el){if((el[find])==in1){alert(el[out])}})">найти блок ДОДЕЛАТЬ</button>
+    
+</div>
+</body>
+</html>
