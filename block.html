@@ -71,8 +71,15 @@ function generator(){
     $(block).children().eq(6).val(transactions);
     $(block).children().eq(8).val(lasthash);
 
-} /*style="width:200px; height: 300px; display:inline-block; border:solid 2px;"*/
-/* $.each(blockChain,function(i,el){consolr,log(el.id+1)}) */
+} 
+
+function finder(x,y){
+var arg = x, find = y;
+var in1 = prompt('что найти?(id, time, nonce, hash, lasthash)');
+if(find=="id"){arg-=1;};
+blockChain.find(function(x){if(x[find]==arg){if(in1=="id"){alert(+(x[in1])+1);} else {alert(x[in1]);}}})
+}
+
 </script>
 
 <style>
@@ -83,9 +90,9 @@ function generator(){
     <button onclick="new generator();">1 блок</button>
     <button onclick="target = prompt(); return target;">target</button>
     <button onclick="console.log(blockChain);">Вывести массив</button>
-    <button onclick="var count = prompt('сколько блоков создать?'); for(var i=0;i<count;i++){generator();}">Создать несколько блоков</button>
-    <input id="check" type="checkbox">
-    <button onclick="var find = prompt('По какому критерию найти?'); var in1 = prompt('что найти?'); var out = prompt('что вывести?'); $.each(blockChain,function(i,el){if((el[find])==in1){alert(el[out])}})">найти блок ДОДЕЛАТЬ</button>
+    <button onclick="var count = prompt('сколько блоков создать?'); for(var i=0;i<count;i++){new generator();}">Создать несколько блоков</button>
+    <input id="check" type="checkbox" title="При значении true можно создавать блоки со своим текстом">
+    <button onclick="var find = prompt('По какому критерию искать?(id, time, nonce, hash, lasthash)'); var findId = prompt('введите значение поля'); finder(findId,find);">Найти значение блока по ключу</button>
     
 </div>
 </body>
